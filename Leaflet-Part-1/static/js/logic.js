@@ -1,6 +1,6 @@
 // initialize a leaflet map
 let myMap=L.map("map",{
-  center:[38,97],
+  center:[38,-94],
   zoom:4
 })
 
@@ -30,6 +30,30 @@ let url="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
 //     }
 //   }
 // });
+//Function to map magnitude to marker size
+function getSize(magnitude) {
+  const size = Math.sqrt(magnitude) * 4;
+  return isNaN(size) ? 4 : size; // Use a default size (5 in this case) if NaN
+}
+
+function getColor(depth) {
+  let color=""
+  if (depth < -10) {
+    return color= '#0008000';
+  } else if (depth >= -10 && depth < 10) {
+    return color= '#A3F600';
+  } else if (depth >= 10 && depth < 30) {
+    return color= '#DCF400';
+  } else if (depth >= 30 && depth < 50) {
+    return color= '#F7DB11';
+  } else if (depth >= 50 && depth < 70) {
+    return color= '#FDB72A';
+  } else if (depth >= 70 && depth < 90) {
+    return color='#FCA35D';
+  } else {
+    return color= '#FF5F65';
+  }
+}
 
 d3.json(url).then(function(response) {
   let features = response.features;
@@ -39,10 +63,17 @@ d3.json(url).then(function(response) {
 
   for (let i = 0; i < marker_limit; i++) {
     let location = features[i].geometry;
-
+    //let magnitude=features.properties.mag;
     if (location) {
+      let depth= location.coordinates[2];
+      let magnitude=features[i].properties.mag;
       let coordinates = [location.coordinates[1], location.coordinates[0]];
-      L.circleMarker(coordinates).addTo(myMap);
+      L.circleMarker(coordinates,{
+        radius:getSize(magnitude),
+        color: getColor(depth),
+        fillColor:getColor(depth),
+        fillOpacity:0.75,
+      }).addTo(myMap);
     }
   }
 });
