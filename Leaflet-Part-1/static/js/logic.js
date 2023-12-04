@@ -24,25 +24,40 @@ function getSize(magnitude) {
   return isNaN(size) ? 4 : size; // Use a default size (4 in this case) if NaN
 }
 
+// function getColor(depth) {
+//   let color=""
+//   if (depth < -10) {
+//     return color= '#98ee00';
+//   } else if (depth >= -10 && depth < 10) {
+//     return color= '#d4ee00';
+//   } else if (depth >= 10 && depth < 30) {
+//     return color= '#ee9c00';
+//   } else if (depth >= 30 && depth < 50) {
+//     return color= '#ee9c00';
+//   } else if (depth >= 50 && depth < 70) {
+//     return color= '#ea2c2c';
+//   } else if (depth >= 70 && depth < 90) {
+//     return color='#ea2c2c';
+//   } else {
+//     return color= '#ea2c2c';
+//   }
+// }
 function getColor(depth) {
-  let color=""
-  if (depth < -10) {
-    return color= '#98ee00';
-  } else if (depth >= -10 && depth < 10) {
-    return color= '#d4ee00';
-  } else if (depth >= 10 && depth < 30) {
-    return color= '#ee9c00';
-  } else if (depth >= 30 && depth < 50) {
-    return color= '#ee9c00';
-  } else if (depth >= 50 && depth < 70) {
-    return color= '#ea2c2c';
-  } else if (depth >= 70 && depth < 90) {
-    return color='#ea2c2c';
-  } else {
-    return color= '#ea2c2c';
+  switch (true) {
+    case depth > 90:
+      return "#ea2c2c";
+    case depth > 70:
+      return "#ea822c";
+    case depth > 50:
+      return "#ee9c00";
+    case depth > 30:
+      return "#eecc00";
+    case depth > 10:
+      return "#d4ee00";
+    default:
+      return "#98ee00";
   }
 }
-
 
 
 d3.json(url).then(function(response) {
@@ -67,20 +82,23 @@ d3.json(url).then(function(response) {
     }
   }
 });
-let legend=L.control({
-  position:"bottomright"
+let legend = L.control({
+  position: "bottomright"
 });
 
- legend.onAdd=function(){
-   let div=L.DomUtil.create("div","info legend");
-   let grades=[-10,10,30,50,70,90];
-   let colors=['#98ee00','#d4ee00','#ee9c00','#ea822c','#ea2c2c'];
-   for(let i=0; i<grades.length;i++){
-     div.innerHTML +=
-       '<i style="background:' + colors[i] + '"></i> ' +
-       grades[i] + (grades[i + 1] ? '&ndash;' + (grades[i + 1] - 1) + '<br>' : '+');
-   }
-   return div;
- };
+legend.onAdd = function () {
+  let div = L.DomUtil.create("div", "info legend");
+
+  let grades = [-10, 10, 30, 50, 70, 90];
+  let colors = [ "#98ee00", "#d4ee00","#eecc00","#ee9c00","#ea822c","#ea2c2c"];
+
+  // Loop through intervals and generate a label with a colored square for each interval
+  for (let i = 0; i < grades.length; i++) {
+    div.innerHTML +=
+      '<i style="background:' + colors[i] + '"></i> ' +
+      grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+  }
+  return div;
+};
 
 legend.addTo(myMap);
