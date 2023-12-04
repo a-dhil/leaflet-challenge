@@ -11,6 +11,8 @@ let myMap=L.map("map",{
 //     attribution:
 //       'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
 //   }).addTo(myMap);
+
+// create a tile layer that will be the background
 let basemap=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap);
@@ -42,6 +44,9 @@ function getSize(magnitude) {
 //     return color= '#ea2c2c';
 //   }
 // }
+
+//function to map depth to color
+// another way to write conditions
 function getColor(depth) {
   switch (true) {
     case depth > 90:
@@ -59,7 +64,7 @@ function getColor(depth) {
   }
 }
 
-
+//map each location of eartquake and create circle marker.
 d3.json(url).then(function(response) {
   let features = response.features;
   console.log(features);
@@ -68,7 +73,7 @@ d3.json(url).then(function(response) {
 
   for (let i = 0; i < marker_limit; i++) {
     let location = features[i].geometry;
-    //let magnitude=features.properties.mag;
+    
     if (location) {
       let depth= location.coordinates[2];
       let magnitude=features[i].properties.mag;
@@ -82,6 +87,8 @@ d3.json(url).then(function(response) {
     }
   }
 });
+
+// create a legend that control the display information.
 let legend = L.control({
   position: "bottomright"
 });
